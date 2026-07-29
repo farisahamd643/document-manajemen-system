@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Management System</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- DataTables -->
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #858796;
+            --success-color: #1cc88a;
+            --info-color: #36b9cc;
+            --warning-color: #f6c23e;
+            --danger-color: #e74a3b;
+            --dark-color: #5a5c69;
+        }
+        
+        body {
+            background: #f8f9fc;
+            min-height: 100vh;
+        }
+        
+        /* Login Page Styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-container::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.05);
+            transform: rotate(45deg);
+            top: -50%;
+            left: -50%;
+            animation: float 20s linear infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: rotate(0deg) scale(1); }
+            100% { transform: rotate(360deg) scale(1.5); }
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            z-index: 1;
+            animation: slideUp 0.6s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .login-logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-logo img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4e73df;
+            padding: 5px;
+        }
+        
+        .login-logo h3 {
+            color: #4e73df;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .login-logo p {
+            color: #858796;
+            font-size: 14px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e2e7f0;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #4e73df, #224abe);
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(78, 115, 223, 0.4);
+        }
+        
+        /* Dashboard Styles */
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .sidebar-brand {
+            padding: 20px;
+            text-align: center;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar-brand img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid white;
+            padding: 3px;
+            margin-bottom: 10px;
+        }
+        
+        .sidebar-brand h5 {
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+        
+        .sidebar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 25px;
+            margin: 5px 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .sidebar-nav .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: translateX(5px);
+        }
+        
+        .sidebar-nav .nav-link.active {
+            background: white;
+            color: #4e73df;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-nav .nav-link i {
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .navbar-top {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border-left: 4px solid #4e73df;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-card .stat-icon {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 2.5rem;
+            opacity: 0.2;
+        }
+        
+        .stat-card .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+        
+        .stat-card .stat-label {
+            color: #858796;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        .chart-card h6 {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .btn-action {
+            border-radius: 8px;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            margin: 2px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Dark Mode */
+        body.dark-mode {
+            background: #1a1a2e;
+        }
+        
+        body.dark-mode .navbar-top {
+            background: #16213e;
+        }
+        
+        body.dark-mode .stat-card,
+        body.dark-mode .chart-card,
+        body.dark-mode .table-container {
+            background: #16213e;
+            color: white;
+        }
+        
+        body.dark-mode .stat-card .stat-number {
+            color: white;
+        }
+        
+        body.dark-mode .dataTables_wrapper {
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                margin-left: -250px;
+            }
+            .sidebar.active {
+                margin-left: 0;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .login-card {
+                margin: 20px;
+                padding: 30px;
+            }
+        }
+        
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        
+        .upload-zone:hover {
+            border-color: #4e73df;
+            background: #f0f4ff;
+        }
+        
+        .upload-zone.dragover {
+            border-color: #4e73df;
+            background: #e6edff;
+            transform: scale(1.02);
+        }
+        
+        .progress {
+            height: 20px;
+            border-radius: 10px;
+            background: #e9ecef;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #4e73df, #224abe);
+            transition: width 0.3s ease;
+        }
+        
+        /* Toast Custom */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4e73df;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Login Page -->
+<div id="loginPage" class="login-container">
+    <div class="login-card">
+        <div class="login-logo">
+            <img src="https://via.placeholder.com/80/4e73df/ffffff?text=DMS" alt="Logo">
+            <h3>DocManager</h3>
+            <p>Document Management System</p>
+        </div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-user"></i> Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Masukkan username" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label"><i class="fas fa-lock"></i> Password</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" placeholder="Masukkan password" required>
+                    <button class="btn btn-outline-secondary" type="button" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="eyeIcon"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember Me</label>
+                </div>
+                <a href="#" class="text-decoration-none" style="color: #4e73df;">Lupa Password?</a>
+            </div>
+            <button type="submit" class="btn btn-login">
+                <i class="fas fa-sign-in-alt me-2"></i> Login
+            </button>
+        </form>
+        <div class="text-center mt-3">
+            <small class="text-muted">© 2026 DocManager. All rights reserved.</small>
+        </div>
+    </div>
+</div>
+
+<!-- Main Dashboard -->
+<div id="dashboardPage" style="display: none;">
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <img src="https://via.placeholder.com/60/ffffff/4e73df?text=DMS" alt="Logo">
+            <h5>DocManager</h5>
+            <small style="opacity: 0.7;">v2.0.0</small>
+        </div>
+        <div class="sidebar-nav">
+            <a href="#" class="nav-link active" onclick="showPage('dashboard')">
+                <i class="fas fa-th-large"></i> Dashboard
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('upload')">
+                <i class="fas fa-upload"></i> Upload File
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('download')">
+                <i class="fas fa-download"></i> Download File
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('files')">
+                <i class="fas fa-file-alt"></i> Semua File
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('file-types')">
+                <i class="fas fa-tag"></i> Jenis File
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('folders')">
+                <i class="fas fa-folder"></i> Folder
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('categories')">
+                <i class="fas fa-list"></i> Kategori
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('statistics')">
+                <i class="fas fa-chart-bar"></i> Statistik
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('graphics')">
+                <i class="fas fa-chart-line"></i> Grafik
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('history-upload')">
+                <i class="fas fa-history"></i> Riwayat Upload
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('history-download')">
+                <i class="fas fa-history"></i> Riwayat Download
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('users')">
+                <i class="fas fa-users"></i> User Management
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('backup')">
+                <i class="fas fa-database"></i> Backup Database
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('settings')">
+                <i class="fas fa-cog"></i> Pengaturan
+            </a>
+            <a href="#" class="nav-link" onclick="showPage('profile')">
+                <i class="fas fa-user-circle"></i> Profil Admin
+            </a>
+            <a href="#" class="nav-link text-danger" onclick="handleLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Navbar -->
+        <nav class="navbar-top d-flex justify-content-between align-items-center">
+            <div>
+                <button class="btn btn-link d-md-none" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <span class="fw-bold" id="pageTitle">Dashboard</span>
+                <nav aria-label="breadcrumb" class="d-inline-block ms-3">
+                    <ol class="breadcrumb mb-0" id="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item active" id="breadcrumbCurrent">Dashboard</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-link" onclick="toggleDarkMode()">
+                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                </button>
+                <button class="btn btn-link" onclick="refreshDashboard()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+                <div class="dropdown">
+                    <a href="#" class="text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                        <img src="https://via.placeholder.com/40/4e73df/ffffff?text=A" class="rounded-circle" width="40" height="40">
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" onclick="showPage('profile')"><i class="fas fa-user me-2"></i> Profil</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="showPage('settings')"><i class="fas fa-cog me-2"></i> Pengaturan</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="pageContent">
+            <!-- Dashboard Content -->
+            <div id="dashboardContent">
+                <!-- Stat Cards -->
+                <div class="row g-3 mb-4" id="statCards">
+                    <!-- Will be loaded by JavaScript -->
+                </div>
+                
+                <!-- Charts -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <h6><i class="fas fa-chart-bar me-2"></i> Grafik Upload Bulanan</h6>
+                            <canvas id="uploadChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="chart-card">
+                            <h6><i class="fas fa-chart-bar me-2"></i> Grafik Download Bulanan</h6>
+                            <canvas id="downloadChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <h6><i class="fas fa-chart-pie me-2"></i> Jenis File</h6>
+                            <canvas id="fileTypeChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <h6><i class="fas fa-database me-2"></i> Penggunaan Storage</h6>
+                            <canvas id="storageChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="chart-card">
+                            <h6><i class="fas fa-users me-2"></i> Aktivitas User</h6>
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Other Pages -->
+            <div id="otherPages" style="display: none;">
+                <div class="table-container">
+                    <div id="pageContentInner">
+                        <h5 class="mb-3" id="pageHeading">Page Title</h5>
+                        <div id="pageContentBody">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast-container"></div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+// ==================== GLOBAL VARIABLES ====================
+let currentUser = null;
+let currentPage = 'dashboard';
+let uploadChart, downloadChart, fileTypeChart, storageChart, activityChart;
+
+// ==================== LOGIN SYSTEM ====================
+function handleLogin(e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    // Simulasi login - Dalam produksi gunakan AJAX ke backend
+    if (username && password) {
+        // Animasi loading
+        const btn = e.target.querySelector('.btn-login');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Loading...';
+        btn.disabled = true;
+        
+        setTimeout(() => {
+            // Simulasi data user
+            currentUser = {
+                id: 1,
+                name: 'Administrator',
+                username: username,
+                email: 'admin@docmanager.com',
+                role: 'Super Admin',
+                photo: 'https://via.placeholder.com/40/4e73df/ffffff?text=A'
+            };
+            
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('dashboardPage').style.display = 'block';
+            
+            // Inisialisasi dashboard
+            initDashboard();
+            
+            showToast('success', 'Login Berhasil', `Selamat datang, ${currentUser.name}!`);
+            
+            btn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i> Login';
+            btn.disabled = false;
+        }, 1500);
+    } else {
+        showToast('error', 'Error', 'Username dan password harus diisi!');
+    }
+}
+
+function togglePassword() {
+    const password = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (password.type === 'password') {
+        password.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        password.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+function handleLogout() {
+    Swal.fire({
+        title: 'Konfirmasi Logout',
+        text: 'Apakah Anda yakin ingin logout?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#e74a3b',
+        confirmButtonText: 'Ya, Logout!',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            currentUser = null;
+            document.getElementById('dashboardPage').style.display = 'none';
+            document.getElementById('loginPage').style.display = 'flex';
+            showToast('info', 'Logout', 'Anda telah logout');
+        }
+    });
+}
+
+// ==================== DASHBOARD FUNCTIONS ====================
+function initDashboard() {
+    loadStats();
+    initCharts();
+    setupAutoRefresh();
+}
+
+function loadStats() {
+    // Simulasi data statistik
+    const stats = [
+        { label: 'Total File', value: '1,234', icon: 'fa-file', color: '#4e73df' },
+        { label: 'Upload Hari Ini', value: '45', icon: 'fa-upload', color: '#1cc88a' },
+        { label: 'Total Download', value: '892', icon: 'fa-download', color: '#36b9cc' },
+        { label: 'Total Pengguna', value: '28', icon: 'fa-users', color: '#f6c23e' },
+        { label: 'Total Jenis File', value: '15', icon: 'fa-tags', color: '#e74a3b' },
+        { label: 'Total Folder', value: '12', icon: 'fa-folder', color: '#858796' },
+        { label: 'Kapasitas Penyimpanan', value: '50 GB', icon: 'fa-database', color: '#4e73df' },
+        { label: 'Sisa Penyimpanan', value: '32.5 GB', icon: 'fa-hdd', color: '#1cc88a' },
+        { label: 'Data Bulan Ini', value: '156', icon: 'fa-calendar', color: '#36b9cc' }
+    ];
+    
+    let html = '';
+    stats.forEach(stat => {
+        html += `
+            <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+                <div class="stat-card" style="border-left-color: ${stat.color}">
+                    <div class="stat-icon" style="color: ${stat.color}">
+                        <i class="fas ${stat.icon}"></i>
+                    </div>
+                    <div class="stat-number">${stat.value}</div>
+                    <div class="stat-label">${stat.label}</div>
+                </div>
+            </div>
+        `;
+    });
+    document.getElementById('statCards').innerHTML = html;
+}
+
+function initCharts() {
+    // Upload Chart
+    const uploadCtx = document.getElementById('uploadChart').getContext('2d');
+    uploadChart = new Chart(uploadCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
+            datasets: [{
+                label: 'Upload',
+                data: [65, 78, 90, 85, 102, 95, 110, 120, 115, 130, 140, 150],
+                backgroundColor: 'rgba(78, 115, 223, 0.8)',
+                borderColor: '#4e73df',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
+        }
+    });
+    
+    // Download Chart
+    const downloadCtx = document.getElementById('downloadChart').getContext('2d');
+    downloadChart = new Chart(downloadCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'],
+            datasets: [{
+                label: 'Download',
+                data: [45, 58, 70, 65, 82, 75, 90, 100, 95, 110, 120, 130],
+                backgroundColor: 'rgba(28, 200, 138, 0.8)',
+                borderColor: '#1cc88a',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
+        }
+    });
+    
+    // File Type Pie Chart
+    const fileTypeCtx = document.getElementById('fileTypeChart').getContext('2d');
+    fileTypeChart = new Chart(fileTypeCtx, {
+        type: 'pie',
+        data: {
+            labels: ['PDF', 'DOC', 'DOCX', 'XLS', 'XLSX', 'PPT', 'PPTX', 'JPG', 'PNG', 'ZIP', 'RAR', 'MP4', 'MP3', 'CSV', 'TXT', 'Lainnya'],
+            datasets: [{
+                data: [25, 18, 15, 12, 10, 8, 7, 6, 5, 4, 3, 2, 2, 1, 1, 1],
+                backgroundColor: [
+                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                    '#858796', '#5a5c69', '#f8f9fc', '#2d3748', '#6c757d',
+                    '#28a745', '#dc3545', '#17a2b8', '#ffc107', '#6f42c1', '#fd7e14'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+    
+    // Storage Chart
+    const storageCtx = document.getElementById('storageChart').getContext('2d');
+    storageChart = new Chart(storageCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Terpakai', 'Tersisa'],
+            datasets: [{
+                data: [17.5, 32.5],
+                backgroundColor: ['#4e73df', '#1cc88a'],
+                borderWidth: 3
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+    
+    // Activity Chart
+    const activityCtx = document.getElementById('activityChart').getContext('2d');
+    activityChart = new Chart(activityCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Admin', 'User1', 'User2', 'User3', 'User4'],
+            datasets: [
+                {
+                    label: 'Upload',
+                    data: [45, 30, 25, 20, 15],
+                    backgroundColor: 'rgba(78, 115, 223, 0.8)'
+                },
+                {
+                    label: 'Download',
+                    data: [35, 40, 20, 25, 30],
+                    backgroundColor: 'rgba(28, 200, 138, 0.8)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'bottom' } }
+        }
+    });
+}
+
+function setupAutoRefresh() {
+    setInterval(() => {
+        refreshDashboard();
+    }, 60000); // Refresh setiap 60 detik
+}
+
+function refreshDashboard() {
+    if (currentPage === 'dashboard') {
+        loadStats();
+        showToast('info', 'Refresh', 'Dashboard diperbarui');
+    }
+}
+
+// ==================== PAGE NAVIGATION ====================
+function showPage(page) {
+    currentPage = page;
+    
+    // Update active sidebar
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        link.classList.remove('active');
+    });
+    const activeLinks = document.querySelectorAll(`.sidebar-nav .nav-link[onclick*="${page}"]`);
+    if (activeLinks.length > 0) activeLinks[0].classList.add('active');
+    
+    // Update breadcrumb
+    const pageNames = {
+        'dashboard': 'Dashboard',
+        'upload': 'Upload File',
+        'download': 'Download File',
+        'files': 'Semua File',
+        'file-types': 'Jenis File',
+        'folders': 'Folder',
+        'categories': 'Kategori',
+        'statistics': 'Statistik',
+        'graphics': 'Grafik',
+        'history-upload': 'Riwayat Upload',
+        'history-download': 'Riwayat Download',
+        'users': 'User Management',
+        'backup': 'Backup Database',
+        'settings': 'Pengaturan',
+        'profile': 'Profil Admin'
+    };
+    
+    document.getElementById('pageTitle').textContent = pageNames[page] || page;
+    document.getElementById('breadcrumbCurrent').textContent = pageNames[page] || page;
+    
+    if (page === 'dashboard') {
+        document.getElementById('dashboardContent').style.display = 'block';
+        document.getElementById('otherPages').style.display = 'none';
+        initDashboard();
+    } else {
+        document.getElementById('dashboardContent').style.display = 'none';
+        document.getElementById('otherPages').style.display = 'block';
+        loadPageContent(page);
+    }
+}
+
+function loadPageContent(page) {
+    const heading = document.getElementById('pageHeading');
+    const body = document.getElementById('pageContentBody');
+    
+    // Simulasi konten halaman
+    const contentMap = {
+        'upload': `
+            <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                <i class="fas fa-cloud-upload-alt fa-3x text-primary mb-3"></i>
+                <h5>Drag & Drop File di Sini</h5>
+                <p class="text-muted">atau klik untuk memilih file</p>
+                <input type="file" id="fileInput" multiple style="display: none" onchange="handleFileUpload(this)">
+            </div>
+            <div id="uploadProgress" style="display: none;" class="mt-3">
+                <div class="progress">
+                    <div class="progress-bar" id="progressBar" style="width: 0%">0%</div>
+                </div>
+                <p class="mt-2 text-center" id="uploadStatus">Mengupload...</p>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <label class="form-label">Judul File</label>
+                    <input type="text" class="form-control" id="fileTitle" placeholder="Masukkan judul file">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Kategori</label>
+                    <select class="form-select" id="fileCategory">
+                        <option>Pilih Kategori</option>
+                        <option>Dokumen</option>
+                        <option>Gambar</option>
+                        <option>Video</option>
+                        <option>Audio</option>
+                    </select>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <label class="form-label">Deskripsi</label>
+                    <textarea class="form-control" rows="3" placeholder="Deskripsi file..."></textarea>
+                </div>
+                <div class="col-md-12 mt-3">
+                    <button class="btn btn-primary" onclick="simulateUpload()">
+                        <i class="fas fa-upload me-2"></i> Upload
+                    </button>
+                </div>
+            </div>
+        `,
+        'files': `
+            <table id="filesTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama File</th>
+                        <th>Jenis</th>
+                        <th>Folder</th>
+                        <th>Ukuran</th>
+                        <th>Upload Oleh</th>
+                        <th>Tanggal</th>
+                        <th>Download</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Laporan_2025.pdf</td>
+                        <td>PDF</td>
+                        <td>Laporan</td>
+                        <td>2.4 MB</td>
+                        <td>Admin</td>
+                        <td>2025-01-15</td>
+                        <td>45</td>
+                        <td><span class="badge bg-success">Aktif</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-warning btn-action"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-success btn-action"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm btn-danger btn-action"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Foto_Profil.jpg</td>
+                        <td>JPG</td>
+                        <td>Gambar</td>
+                        <td>856 KB</td>
+                        <td>User1</td>
+                        <td>2025-01-14</td>
+                        <td>12</td>
+                        <td><span class="badge bg-success">Aktif</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action"><i class="fas fa-eye"></i></button>
+                            <button class="btn btn-sm btn-warning btn-action"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-success btn-action"><i class="fas fa-download"></i></button>
+                            <button class="btn btn-sm btn-danger btn-action"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `,
+        'users': `
+            <button class="btn btn-primary mb-3" onclick="showToast('info', 'Info', 'Fitur CRUD User siap digunakan')">
+                <i class="fas fa-user-plus me-2"></i> Tambah User
+            </button>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Administrator</td>
+                        <td>admin</td>
+                        <td>admin@docmanager.com</td>
+                        <td><span class="badge bg-danger">Super Admin</span></td>
+                        <td><span class="badge bg-success">Aktif</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger btn-action"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>User Biasa</td>
+                        <td>user1</td>
+                        <td>user1@docmanager.com</td>
+                        <td><span class="badge bg-info">User</span></td>
+                        <td><span class="badge bg-success">Aktif</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-danger btn-action"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `,
+        'settings': `
+            <h6 class="mb-3">Pengaturan Website</h6>
+            <form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Website</label>
+                        <input type="text" class="form-control" value="DocManager">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="info@docmanager.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">WhatsApp</label>
+                        <input type="text" class="form-control" value="+62 812 3456 7890">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Alamat</label>
+                        <input type="text" class="form-control" value="Jakarta, Indonesia">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Batas Maksimum Upload</label>
+                        <input type="number" class="form-control" value="100" min="1">
+                        <small class="text-muted">Dalam MB</small>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Tema</label>
+                        <select class="form-select">
+                            <option>Light</option>
+                            <option>Dark</option>
+                        </select>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <button class="btn btn-primary" onclick="showToast('success', 'Berhasil', 'Pengaturan disimpan!')">
+                            <i class="fas fa-save me-2"></i> Simpan Pengaturan
+                        </button>
+                    </div>
+                </div>
+            </form>
+        `,
+        'profile': `
+            <div class="text-center mb-4">
+                <img src="https://via.placeholder.com/120/4e73df/ffffff?text=A" class="rounded-circle" width="120" height="120">
+                <h5 class="mt-3">Administrator</h5>
+                <p class="text-muted">Super Admin</p>
+            </div>
+            <form>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" value="Administrator">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control" value="admin">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" value="admin@docmanager.com">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Password Baru</label>
+                        <input type="password" class="form-control" placeholder="Kosongkan jika tidak diubah">
+                    </div>
+                    <div class="col-12 mt-3">
+                        <button class="btn btn-primary" onclick="showToast('success', 'Berhasil', 'Profil diperbarui!')">
+                            <i class="fas fa-save me-2"></i> Update Profil
+                        </button>
+                    </div>
+                </div>
+            </form>
+        `
+    };
+    
+    // Default content untuk halaman yang belum ada kontennya
+    if (!contentMap[page]) {
+        body.innerHTML = `
+            <div class="text-center py-5">
+                <i class="fas fa-file-alt fa-4x text-muted mb-3"></i>
+                <h5>Halaman ${document.getElementById('pageTitle').textContent}</h5>
+                <p class="text-muted">Konten halaman ini sedang dalam pengembangan.</p>
+                <button class="btn btn-primary" onclick="showToast('info', 'Info', 'Fitur akan segera hadir!')">
+                    <i class="fas fa-info-circle me-2"></i> Info
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    body.innerHTML = contentMap[page];
+    
+    // Inisialisasi DataTables untuk halaman files
+    if (page === 'files' && $.fn.DataTable) {
+        setTimeout(() => {
+            if ($.fn.DataTable.isDataTable('#filesTable')) {
+                $('#filesTable').DataTable().destroy();
+            }
+            $('#filesTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
+                }
+            });
+        }, 100);
+    }
+}
+
+// ==================== UPLOAD FUNCTIONS ====================
+function handleFileUpload(input) {
+    const files = input.files;
+    if (files.length > 0) {
+        document.getElementById('uploadProgress').style.display = 'block';
+        simulateUpload();
+    }
+}
+
+function simulateUpload() {
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress >= 100) {
+            progress = 100;
+            clearInterval(interval);
+            document.getElementById('uploadStatus').textContent = 'Upload Selesai!';
+            document.getElementById('uploadStatus').style.color = '#1cc88a';
+            showToast('success', 'Berhasil', 'File berhasil diupload!');
+            
+            // Reset setelah 2 detik
+            setTimeout(() => {
+                document.getElementById('uploadProgress').style.display = 'none';
+                document.getElementById('progressBar').style.width = '0%';
+                document.getElementById('progressBar').textContent = '0%';
+                document.getElementById('uploadStatus').textContent = 'Mengupload...';
+                document.getElementById('uploadStatus').style.color = '';
+            }, 2000);
+        }
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('progressBar').textContent = Math.round(progress) + '%';
+    }, 200);
+}
+
+// ==================== DRAG & DROP ====================
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadZone = document.getElementById('uploadZone');
+    if (uploadZone) {
+        uploadZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('dragover');
+        });
+        uploadZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+        });
+        uploadZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('uploadProgress').style.display = 'block';
+                simulateUpload();
+            }
+        });
+    }
+});
+
+// ==================== TOAST NOTIFICATION ====================
+function showToast(type, title, message) {
+    const container = document.querySelector('.toast-container');
+    const colors = {
+        success: '#1cc88a',
+        error: '#e74a3b',
+        info: '#36b9cc',
+        warning: '#f6c23e'
+    };
+    
+    const toast = document.createElement('div');
+    toast.className = 'toast show fade-in';
+    toast.style.cssText = `
+        background: white;
+        border-left: 4px solid ${colors[type] || '#4e73df'};
+        border-radius: 10px;
+        padding: 15px 20px;
+        margin-bottom: 10px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        min-width: 300px;
+        animation: slideIn 0.5s ease;
+    `;
+    
+    const icons = {
+        success: 'fa-check-circle',
+        error: 'fa-times-circle',
+        info: 'fa-info-circle',
+        warning: 'fa-exclamation-triangle'
+    };
+    
+    toast.innerHTML = `
+        <div class="d-flex align-items-start">
+            <i class="fas ${icons[type] || 'fa-info-circle'} me-2" style="color: ${colors[type] || '#4e73df'}; font-size: 1.2rem; margin-top: 2px;"></i>
+            <div class="flex-grow-1">
+                <strong style="color: ${colors[type] || '#4e73df'};">${title}</strong>
+                <div class="text-muted small">${message}</div>
+            </div>
+            <button class="btn-close btn-sm" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        if (toast.parentElement) {
+            toast.style.opacity = '0';
+            toast.style.transition = 'opacity 0.5s';
+            setTimeout(() => toast.remove(), 500);
+        }
+    }, 5000);
+}
+
+// Tambahkan style untuk animasi toast
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+`;
+document.head.appendChild(style);
+
+// ==================== SIDEBAR TOGGLE ====================
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('active');
+}
+
+// ==================== DARK MODE ====================
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const icon = document.getElementById('darkModeIcon');
+    if (document.body.classList.contains('dark-mode')) {
+        icon.className = 'fas fa-sun';
+        showToast('info', 'Dark Mode', 'Mode gelap diaktifkan');
+    } else {
+        icon.className = 'fas fa-moon';
+        showToast('info', 'Light Mode', 'Mode terang diaktifkan');
+    }
+}
+
+// ==================== KEYBOARD SHORTCUTS ====================
+document.addEventListener('keydown', function(e) {
+    // Ctrl + L untuk logout
+    if (e.ctrlKey && e.key === 'l') {
+        e.preventDefault();
+        handleLogout();
+    }
+    // Ctrl + R untuk refresh dashboard
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        refreshDashboard();
+    }
+});
+
+// ==================== INITIALIZATION ====================
+console.log('Document Management System v2.0.0');
+console.log('Created with ❤️ using PHP Native + Bootstrap 5');
+
+// Simulasi auto-login untuk demo (hapus di production)
+// setTimeout(() => {
+//     document.getElementById('username').value = 'admin';
+//     document.getElementById('password').value = 'admin123';
+// }, 500);
+</script>
+
+</body>
+</html>
